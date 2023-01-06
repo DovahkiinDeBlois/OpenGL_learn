@@ -105,7 +105,6 @@ int main(int argc, char *argv[]){
 
 
     // 生成VBO 顶点缓冲对象
-    // EBO == IBO, IBO就是索引缓冲对象 index buffer object
     unsigned int VBO, VAO, IBO;
     // 生成VBO
     glGenVertexArrays(1, &VAO);
@@ -137,27 +136,15 @@ int main(int argc, char *argv[]){
         glClear(GL_COLOR_BUFFER_BIT);
 
         float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0) + 0.2f;
+        float greenValue = (sin(timeValue) / 4.0) + 0.2f;
         float posx = (sin(timeValue) / 2.0);
 
         ourshader.setFloat("offset", posx);
         ourshader.setVec4("vColor", 0.0, greenValue, 0.0, 1.0);
-        // int vertexColor = glGetUniformLocation(shaderProgram, "vColor");
-        // int vertexLocation = glGetUniformLocation(shaderProgram, "aPos");
-        // glUseProgram(shaderProgram);
-        // glUniform4f(vertexColor, 0.0f, greenValue, 0.0f, 1.0f);
-        // setFloat("xOffset", posx);
-        // glUniform3f(vertexLocation, posx, 0.5f, 1.0f);
 
-        // std::cout << "[timeValeu]: " << timeValue << std::endl;
-
-        // 使用程序（着色器程序）
-        // glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
-        // glDeleteShader(fragmentShader);
-        
 
         glfwSwapBuffers(window); // 交换颜色缓冲 //双缓冲交换 //与pygame同样用的双缓冲
         glfwPollEvents(); // 检查是否触发事件, 处理监听
