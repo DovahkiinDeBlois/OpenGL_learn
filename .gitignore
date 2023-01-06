@@ -1,0 +1,4 @@
+/.vscode/
+/lib/libglad.a
+/lib/libglfw3.a
+/lib/libglfw3dll.a
