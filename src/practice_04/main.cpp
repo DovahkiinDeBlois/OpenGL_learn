@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string.h>
-#include "../include/tool/shader.h"
+#include "tool/shader.h"
 
 #include <cmath>
 
