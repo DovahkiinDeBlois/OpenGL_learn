@@ -1,8 +1,8 @@
 #version 330 core
-
-layout (location = 1) in vec4 icolor;
 out vec4 FragColor;
+in vec3 ourcolor;
 uniform vec4 vColor;
 void main(){
-    FragColor = vec4(icolor.x + vColor.x, icolor.y + vColor.y, icolor.z + vColor.z, icolor.w + vColor.w);
+    FragColor = vec4(ourcolor.x, ourcolor.y+vColor.y, ourcolor.z, 1.0f);
+    // FragColor = vec4(ourcolor.x, ourcolor.y, ourcolor.z, 1.0f);
 }
