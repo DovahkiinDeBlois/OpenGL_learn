@@ -137,9 +137,13 @@ int main(int argc, char *argv[]){
 
         float timeValue = glfwGetTime();
         float greenValue = (sin(timeValue) / 4.0) + 0.2f;
-        float posx = (sin(timeValue) / 2.0);
 
-        ourshader.setFloat("offset", posx);
+        float offset = (sin(timeValue / 8.0));
+        float posx = (sin(timeValue) / 2.0) * offset;
+        float posy = (cos(timeValue) / 2.0) * offset;
+
+        ourshader.setFloat("offsetx", posx);
+        ourshader.setFloat("offsety", posy);
         ourshader.setVec4("vColor", 0.0, greenValue, 0.0, 1.0);
 
         glBindVertexArray(VAO);
