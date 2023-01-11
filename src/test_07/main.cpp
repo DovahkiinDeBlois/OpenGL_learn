@@ -116,24 +116,12 @@ int main(int argc, char *argv[]){
     // ? 宽 高 通道
     int pic_w1, pic_h1, nrChannels1;
     int pic_w2, pic_h2, nrChannels2;
-    // ? 图片,宽,高,通道
-    // unsigned char *pic_data1 = stbi_load("./static/texture/container.jpg", &pic_w, &pic_h, &nrChannels, 0);
-    // unsigned char *pic_data1 = stbi_load("./static/texture/awesomeface.png", &pic_w, &pic_h, &nrChannels, 0);
-    unsigned char *pic_data1 = stbi_load("./static/texture/matrix.jpg", &pic_w1, &pic_h1, &nrChannels1, 0);
-    unsigned char *pic_data2 = stbi_load("./static/texture/awesomeface.png", &pic_w2, &pic_h2, &nrChannels2, 0);
     // 生成纹理
     // ? 纹理也是ID引用
     unsigned int texture1, texture2; // 纹理ID定义
     glGenTextures(1, &texture1); // ? 参数:纹理数量, 纹理ID
-    // 激活纹理单元
-    glActiveTexture(GL_TEXTURE0);
     // 纹理绑定
     glBindTexture(GL_TEXTURE_2D, texture1);
-    glGenTextures(1, &texture2); // ? 参数:纹理数量, 纹理ID
-    // 激活纹理单元
-    glActiveTexture(GL_TEXTURE1);
-    // 纹理绑定
-    glBindTexture(GL_TEXTURE_2D, texture2);
     
     // 设置环绕和过滤方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -145,6 +133,10 @@ int main(int argc, char *argv[]){
     // 图像y轴翻转
     // stbi_set_flip_vertically_on_load(true);
 
+    // ? 图片,宽,高,通道
+    // unsigned char *pic_data1 = stbi_load("./static/texture/container.jpg", &pic_w, &pic_h, &nrChannels, 0);
+    // unsigned char *pic_data1 = stbi_load("./static/texture/awesomeface.png", &pic_w, &pic_h, &nrChannels, 0);
+    unsigned char *pic_data1 = stbi_load("./static/texture/brickwall.jpg", &pic_w1, &pic_h1, &nrChannels1, 0);
     if(pic_data1){
         // 纹理生成
         // parm1 纹理目标(如果是2d则与绑定的2d关联，1d与3d无影响)
@@ -163,22 +155,26 @@ int main(int argc, char *argv[]){
     }else{
         std::cout << "FAiled to load texture" << std::endl;
     }
+    // todo 释放图像内存
+    stbi_image_free(pic_data1);
+    glGenTextures(1, &texture2); // ? 参数:纹理数量, 纹理ID
+    // 纹理绑定
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    unsigned char *pic_data2 = stbi_load("./static/texture/awesomeface.png", &pic_w2, &pic_h2, &nrChannels2, 0);
     if(pic_data2){
         // 纹理生成
         // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pic_w, pic_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pic_data1);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pic_w2, pic_h2, 0, GL_RGB, GL_UNSIGNED_BYTE, pic_data2);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pic_w2, pic_h2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pic_data2);
         // todo 为当前绑定的纹理自动生成所有需要的多级渐变纹理
         glGenerateMipmap(GL_TEXTURE_2D);
     }else{
         std::cout << "FAiled to load texture" << std::endl;
     }
-    // todo 释放图像内存
-    stbi_image_free(pic_data1);
     stbi_image_free(pic_data2);
 
     ourshader.use();
-    // ourshader.setInt("texture1", 0);
-    // ourshader.setInt("texture2", 1);
+    ourshader.setInt("texture1", 0);
+    ourshader.setInt("texture2", 1);
     while(!glfwWindowShouldClose(window)){ // 检查是否被退出
         processInput(window); 
         // 渲染指令
@@ -191,9 +187,15 @@ int main(int argc, char *argv[]){
         // ourshader.setVec4("vColor", 0.0, greenValue, 0.0, 1.0);
 
         float posx = (sin(timeValue) / 2.0);
+        float alpha = (sin(timeValue) / 2.0) + 0.5;
         ourshader.setFloat("offsetx", posx);
-
+        ourshader.setFloat("alpha", alpha);
+        // 激活纹理单元
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
+
+        // 激活纹理单元
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         glBindVertexArray(VAO);
