@@ -4,3 +4,4 @@
 /lib/libglfw3dll.a
 *.o
 *.exe
+*.O

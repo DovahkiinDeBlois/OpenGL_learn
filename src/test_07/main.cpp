@@ -124,8 +124,8 @@ int main(int argc, char *argv[]){
     glBindTexture(GL_TEXTURE_2D, texture1);
     
     // 设置环绕和过滤方式
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_CLAMP_TO_EDGE);
@@ -158,6 +158,15 @@ int main(int argc, char *argv[]){
     // todo 释放图像内存
     stbi_image_free(pic_data1);
     glGenTextures(1, &texture2); // ? 参数:纹理数量, 纹理ID
+    // 纹理绑定
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    
+    // 设置环绕和过滤方式
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_MIRRORED_REPEAT);
     // 纹理绑定
     glBindTexture(GL_TEXTURE_2D, texture2);
     unsigned char *pic_data2 = stbi_load("./static/texture/awesomeface.png", &pic_w2, &pic_h2, &nrChannels2, 0);
