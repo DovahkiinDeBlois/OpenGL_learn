@@ -2,7 +2,7 @@
 /lib/libglad.a
 /lib/libglfw3.a
 /lib/libglfw3dll.a
-*.o
+/src/*.o
 *.exe
-*.O
+/src/*.O
 /output/
