@@ -1,13 +1,20 @@
 #include <glad/glad.h> //glad需要在一切opengl前引用
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <string.h>
 #include "tool/Shader.h" // 着色器程序类
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "tool/stb_image.h" // 导入纹理渲染
+# include "windows.h"
 
 #include <cmath>
+
+// 设置每秒的帧率
+# define FPS(T) Sleep(1/T*1000)
 
 // practice_04
 void framebuffer_size_callback(GLFWwindow * window, int width, int hight);
@@ -19,10 +26,19 @@ int main(int argc, char *argv[]){
     std::cout << "01_hello_world" << std::endl;
     Shader::dirName=argv[1];
     glfwInit();
-    // 设置两个版本 
+    // 设置两个版本
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // 主要版本
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // 次要版本
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //设置模式 (核心模式)
+
+
+    // 定义glm
+    glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::mat4 trans = glm::mat4(1.0f);
+    // trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+    // vec = trans * vec;
+    // std::cout << "x:" << vec.x << " y:" << vec.y << " z:" << vec.z << std::endl;
+
 
     // 创建窗口对象
     GLFWwindow * window = glfwCreateWindow(800, 700, "practic_04", NULL, NULL);
@@ -122,7 +138,7 @@ int main(int argc, char *argv[]){
     glGenTextures(1, &texture1); // ? 参数:纹理数量, 纹理ID
     // 纹理绑定
     glBindTexture(GL_TEXTURE_2D, texture1);
-    
+
     // 设置环绕和过滤方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -160,7 +176,7 @@ int main(int argc, char *argv[]){
     glGenTextures(1, &texture2); // ? 参数:纹理数量, 纹理ID
     // 纹理绑定
     glBindTexture(GL_TEXTURE_2D, texture2);
-    
+
     // 设置环绕和过滤方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -184,16 +200,35 @@ int main(int argc, char *argv[]){
     ourshader.use();
     ourshader.setInt("texture1", 0);
     ourshader.setInt("texture2", 1);
+    // unsigned int transformLoc = glGetUniformLocation();
+    unsigned int transformloc = glGetUniformLocation(ourshader.ID, "transform");
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+    glUniformMatrix4fv(transformloc, 1, GL_FALSE, glm::value_ptr(trans));
+
     while(!glfwWindowShouldClose(window)){ // 检查是否被退出
-        processInput(window); 
+        processInput(window);
         // 渲染指令
-        // ... 
+        // ...
         glClearColor(0.2, 0.3, 0.8, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         float timeValue = glfwGetTime();
         // float greenValue = (sin(timeValue) / 4.0) + 0.2f;
         // ourshader.setVec4("vColor", 0.0, greenValue, 0.0, 1.0);
+        float size = sin(timeValue * 1.3);
+        if (size > 0){
+            trans = glm::scale(trans, glm::vec3(0.99, 0.97, 0.99));
+            trans = glm::rotate(trans, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        }else{
+            trans = glm::scale(trans, glm::vec3(1.01, 1.03, 1.01));
+            trans = glm::rotate(trans, glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        }
+
+        // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+        glUniformMatrix4fv(transformloc, 1, GL_FALSE, glm::value_ptr(trans));
 
         float posx = (sin(timeValue) / 2.0);
         float alpha = (sin(timeValue) / 2.0) + 0.5;
@@ -214,6 +249,7 @@ int main(int argc, char *argv[]){
 
         glfwSwapBuffers(window); // 交换颜色缓冲 //双缓冲交换 //与pygame同样用的双缓冲
         glfwPollEvents(); // 检查是否触发事件, 处理监听
+        // FPS(3);
     }
 
     glDeleteVertexArrays(1, &VAO);
